@@ -108,6 +108,28 @@ const SheetWriter = (() => {
       );
 
     //------------------------------------
+    // Audio
+    //------------------------------------
+
+    sheet
+      .getRange(
+        row,
+        CONFIG.COLUMN.AUDIO_UK
+      )
+      .setValue(
+        result.audioUK || ""
+      );
+
+    sheet
+      .getRange(
+        row,
+        CONFIG.COLUMN.AUDIO_US
+      )
+      .setValue(
+        result.audioUS || ""
+      );
+
+    //------------------------------------
     // POS
     //------------------------------------
 

@@ -59,13 +59,17 @@ const Parser = (() => {
 
   function parseWord(html){
 
-      return extractSingle(
+      return Utils.htmlToText(
 
-          html,
+          extractSingle(
 
-          'class="hw dhw"',
+              html,
 
-          "</span>"
+              'class="hw dhw"',
+
+              "</span>"
+
+          )
 
       );
 
@@ -121,13 +125,25 @@ const Parser = (() => {
 
   function parsePOS(html){
 
+      const start = html.indexOf(
+
+          'class="pos dpos'
+
+      );
+
+      if(start < 0)
+
+          return "";
+
+      const block = html.substring(start);
+
       return Utils.htmlToText(
 
           extractSingle(
 
-              html,
+              block,
 
-              'class="pos dpos">',
+              '>',
 
               "</span>"
 
@@ -141,13 +157,25 @@ const Parser = (() => {
 
   function parseLevel(html){
 
+      const start = html.indexOf(
+
+          'class="epp-xref dxref'
+
+      );
+
+      if(start < 0)
+
+          return "";
+
+      const block = html.substring(start);
+
       return Utils.htmlToText(
 
           extractSingle(
 
-              html,
+              block,
 
-              'class="epp-xref dxref"',
+              '>',
 
               "</span>"
 
@@ -191,9 +219,17 @@ const Parser = (() => {
 
           );
 
+      if(!audio)
+
+          return "";
+
       if(audio.startsWith("//"))
 
           audio="https:"+audio;
+
+      else if(audio.startsWith("/"))
+
+          audio="https://dictionary.cambridge.org"+audio;
 
       return audio;
 
@@ -268,19 +304,21 @@ const Parser = (() => {
 
   function parseExample(block){
 
-      return Utils.htmlToText(
+      return extractAll(
 
-          extractSingle(
+          block,
 
-              block,
+          'class="eg deg">',
 
-              'class="eg deg">',
+          "</span>"
 
-              "</span>"
+      )
 
-          )
+      .map(Utils.htmlToText)
 
-      );
+      .filter(Boolean)
+
+      .join(" | ");
 
   }
 
@@ -319,6 +357,64 @@ const Parser = (() => {
           j
 
       );
+
+  }
+
+  // -----------------------------------------------------
+
+  function extractAll(html,start,end){
+
+      const arr=[];
+
+      let pos=0;
+
+      while(true){
+
+          const i=
+
+              html.indexOf(
+
+                  start,
+
+                  pos
+
+              );
+
+          if(i<0)
+
+              break;
+
+          const j=
+
+              html.indexOf(
+
+                  end,
+
+                  i+start.length
+
+              );
+
+          if(j<0)
+
+              break;
+
+          arr.push(
+
+              html.substring(
+
+                  i+start.length,
+
+                  j
+
+              )
+
+          );
+
+          pos=j+end.length;
+
+      }
+
+      return arr;
 
   }
 
