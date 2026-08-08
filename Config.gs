@@ -50,17 +50,17 @@ const CONFIG = {
 
     EXAMPLE: 5,
 
-    IPA_UK: 6,
+    // IPA_UK: 6,
 
-    IPA_US: 7,
+    IPA_US: 6,
 
-    POS: 8,
+    POS: 7,
 
-    LEVEL: 9,
+    LEVEL: 8,
 
-    LINK: 10,
+    LINK: 9,
 
-    STATUS: 11
+    STATUS: 10
 
   },
 

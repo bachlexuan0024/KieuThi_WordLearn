@@ -73,17 +73,17 @@ const Parser = (() => {
 
       let start;
 
-      if(type==="uk"){
-
-          start='uk dpron-i';
-
-      }
-
-      else{
+      if(type==="us"){
 
           start='us dpron-i';
 
       }
+
+      // else{
+
+      //     start='uk dpron-i';
+
+      // }
 
       const block=
 

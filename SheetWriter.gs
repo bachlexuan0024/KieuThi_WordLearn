@@ -89,14 +89,14 @@ const SheetWriter = (() => {
     // IPA
     //------------------------------------
 
-    sheet
-      .getRange(
-        row,
-        CONFIG.COLUMN.IPA_UK
-      )
-      .setValue(
-        result.ukIPA || ""
-      );
+    // sheet
+    //   .getRange(
+    //     row,
+    //     CONFIG.COLUMN.IPA_UK
+    //   )
+    //   .setValue(
+    //     result.ukIPA || ""
+    //   );
 
     sheet
       .getRange(
