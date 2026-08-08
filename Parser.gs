@@ -141,8 +141,9 @@ const Parser = (() => {
   function parsePOS(html) {
 
     /*
-    * Cambridge places POS inside the main
-    * "pos-header dpos-h" of the first dictionary entry.
+    * Cambridge may render POS inside the first entry block
+    * using different class names. We use a regex fallback
+    * so both older and newer markup work.
     */
 
     const entryStart =
@@ -167,26 +168,16 @@ const Parser = (() => {
           )
         : html.substring(entryStart);
 
-    const posStart =
-      entry.indexOf(
-        'class="pos dpos"'
+    const posMatch =
+      entry.match(
+        /class="[^"]*pos[^"]*"[^>]*>([^<]+)/i
       );
 
-    if (posStart < 0)
+    if (!posMatch)
       return "";
 
     return Utils.htmlToText(
-
-      extractSingle(
-
-        entry.substring(posStart),
-
-        ">",
-
-        "</span>"
-
-      )
-
+      posMatch[1]
     );
 
   }
@@ -227,26 +218,16 @@ const Parser = (() => {
           )
         : html.substring(entryStart);
 
-    const levelStart =
-      entry.indexOf(
-        'class="epp-xref dxref'
+    const levelMatch =
+      entry.match(
+        /class="[^"]*dxref[^"]*"[^>]*>([^<]+)/i
       );
 
-    if (levelStart < 0)
+    if (!levelMatch)
       return "";
 
     return Utils.htmlToText(
-
-      extractSingle(
-
-        entry.substring(levelStart),
-
-        ">",
-
-        "</span>"
-
-      )
-
+      levelMatch[1]
     );
 
   }

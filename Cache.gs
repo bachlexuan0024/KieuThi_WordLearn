@@ -165,6 +165,12 @@ const Cache = (() => {
 
   function clear() {
 
+    // Clear Level 1: Script Cache
+    memory.removeAll(
+      getCacheWords()
+    );
+
+    // Clear Level 2: Sheet Cache
     const sheet =
       getCacheSheet();
 
@@ -184,6 +190,31 @@ const Cache = (() => {
     }
 
   }
+
+  // --------------------------------------------------
+
+  function getCacheWords() {
+
+  const sheet =
+    getCacheSheet();
+
+  if (sheet.getLastRow() <= 1)
+    return [];
+
+  return sheet
+    .getRange(
+      2,
+      1,
+      sheet.getLastRow() - 1,
+      1
+    )
+    .getValues()
+    .map(row =>
+      Utils.lower(row[0])
+    )
+    .filter(Boolean);
+
+}
 
   // --------------------------------------------------
 
