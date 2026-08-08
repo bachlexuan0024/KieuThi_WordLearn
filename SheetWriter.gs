@@ -63,10 +63,10 @@ const SheetWriter = (() => {
         CONFIG.COLUMN.VIETNAMESE
       )
       .setValue(
-        // Translator.translate(
-        //   entry.definition || ""
-        // )
-        entry.definition
+        Translator.translate(
+          entry.definition || ""
+        )
+        // entry.definition
       );
 
     //------------------------------------
@@ -187,50 +187,51 @@ const SheetWriter = (() => {
 
   ){
 
-      const builder=
+    const builder =
+      SpreadsheetApp
+        .newRichTextValue()
+        .setText(sentence);
+
+    const regex =
+      new RegExp(
+        "\\b" +
+        Utils.escapeRegex(word) +
+        "\\b",
+        "gi"
+      );
+
+    let match;
+
+    while (
+      (match = regex.exec(sentence)) !== null
+    ) {
+
+      builder.setTextStyle(
+
+        match.index,
+
+        match.index + match[0].length,
 
         SpreadsheetApp
-          .newRichTextValue()
-          .setText(sentence);
 
-      const start=
-        sentence
-          .toLowerCase()
-          .indexOf(
-            word.toLowerCase()
-          );
+          .newTextStyle()
 
-      if(start>=0){
+          .setBold(true)
 
-          builder.setTextStyle(
+          .build()
 
-              start,
+      );
 
-              start+word.length,
+    }
 
-              SpreadsheetApp
-
-                  .newTextStyle()
-
-                  .setBold(true)
-
-                  .build()
-
-          );
-
-      }
-
-      sheet
-        .getRange(
-
-          row,
-
-          CONFIG.COLUMN.EXAMPLE
-
-        )
-        .setRichTextValue(
-          builder.build()
-        );
+    sheet
+      .getRange(
+        row,
+        CONFIG.COLUMN.EXAMPLE
+      )
+      .setRichTextValue(
+        builder.build()
+      );
 
   }
 
