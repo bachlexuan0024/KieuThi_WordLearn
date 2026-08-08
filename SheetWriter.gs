@@ -64,9 +64,9 @@ const SheetWriter = (() => {
       )
       .setValue(
         Translator.translate(
+          result.word,
           entry.definition || ""
         )
-        // entry.definition
       );
 
     //------------------------------------

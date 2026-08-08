@@ -2,18 +2,40 @@
  * ==========================================================
  * Translator.gs
  * Translation Service
+ * English → Vietnamese
  * ==========================================================
  */
 
 const Translator = (() => {
 
   /**
-   * Translate English → Vietnamese
+   * Translate word + definition
+   *
+   * Format:
+   * English word | English definition
+   *
+   * Result:
+   * Vietnamese word | Vietnamese definition
    */
-  function translate(text) {
+  function translate(word, definition) {
 
-    if (Utils.isEmpty(text))
+    word =
+      String(word || "").trim();
+
+    definition =
+      String(definition || "").trim();
+
+    if (
+      Utils.isEmpty(word) &&
+      Utils.isEmpty(definition)
+    ) {
+
       return "";
+
+    }
+
+    const text =
+      word + " | " + definition;
 
     try {
 
