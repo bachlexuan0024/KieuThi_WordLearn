@@ -19,7 +19,7 @@ const Parser = (() => {
 
       word: "",
 
-      ukIPA: "",
+      // ukIPA: "",
 
       usIPA: "",
 
@@ -33,7 +33,7 @@ const Parser = (() => {
 
     result.word = parseWord(html);
 
-    result.ukIPA = parseIPA(html, "uk");
+    // result.ukIPA = parseIPA(html, "uk");
 
     result.usIPA = parseIPA(html, "us");
 
