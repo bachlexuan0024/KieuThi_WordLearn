@@ -27,10 +27,6 @@ const Parser = (() => {
 
       level: "",
 
-      audioUK: "",
-
-      audioUS: "",
-
       entries: []
 
     };
@@ -44,10 +40,6 @@ const Parser = (() => {
     result.pos = parsePOS(html);
 
     result.level = parseLevel(html);
-
-    result.audioUK = parseAudio(html, "uk");
-
-    result.audioUS = parseAudio(html, "us");
 
     result.entries = parseEntries(html);
 
@@ -187,56 +179,6 @@ const Parser = (() => {
 
   // -----------------------------------------------------
 
-  function parseAudio(html,type){
-
-      const target=
-
-          type==="uk"
-
-          ?'uk_pron'
-
-          :'us_pron';
-
-      const block=
-
-          extractSection(
-
-              html,
-
-              target,
-
-              "</source>"
-
-          );
-
-      let audio=
-
-          extractAttribute(
-
-              block,
-
-              'src="'
-
-          );
-
-      if(!audio)
-
-          return "";
-
-      if(audio.startsWith("//"))
-
-          audio="https:"+audio;
-
-      else if(audio.startsWith("/"))
-
-          audio="https://dictionary.cambridge.org"+audio;
-
-      return audio;
-
-  }
-
-  // -----------------------------------------------------
-
   function parseEntries(html){
 
       const entries=[];
@@ -284,19 +226,22 @@ const Parser = (() => {
 
   function parseDefinition(block){
 
-      return Utils.htmlToText(
+    const definition =
+      Utils.htmlToText(
 
-          extractSingle(
+        extractSingle(
 
-              block,
+          block,
 
-              'class="def ddef_d db">',
+          'class="def ddef_d db">',
 
-              "</div>"
+          "</div>"
 
-          )
+        )
 
       );
+
+    return definition.replace(/:\s*$/, "");
 
   }
 

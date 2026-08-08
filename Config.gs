@@ -54,17 +54,13 @@ const CONFIG = {
 
     IPA_US: 7,
 
-    AUDIO_UK: 8,
+    POS: 8,
 
-    AUDIO_US: 9,
+    LEVEL: 9,
 
-    POS: 10,
+    LINK: 10,
 
-    LEVEL: 11,
-
-    LINK: 12,
-
-    STATUS: 13
+    STATUS: 11
 
   },
 
