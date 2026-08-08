@@ -27,204 +27,418 @@ const Parser = (() => {
 
       level: "",
 
+      collocation: "",
+
+      synonym: "",
+
       entries: []
 
     };
 
-    result.word = parseWord(html);
+    result.word =
+      parseWord(html);
 
-    // result.ukIPA = parseIPA(html, "uk");
+    // result.ukIPA =
+    //   parseIPA(html, "uk");
 
-    result.usIPA = parseIPA(html, "us");
+    result.usIPA =
+      parseIPA(html, "us");
 
-    result.pos = parsePOS(html);
+    result.pos =
+      parsePOS(html);
 
-    result.level = parseLevel(html);
+    result.level =
+      parseLevel(html);
 
-    result.entries = parseEntries(html);
+    result.entries =
+      parseEntries(html);
+
+    result.collocation =
+      parseCollocations(html);
+
+    result.synonym =
+      parseSynonyms(html);
 
     return result;
 
   }
 
   // -----------------------------------------------------
+  // Word
+  // -----------------------------------------------------
 
-  function parseWord(html){
+  function parseWord(html) {
 
-      return Utils.htmlToText(
+    return Utils.htmlToText(
 
-          extractSingle(
+      extractSingle(
 
-              html,
+        html,
 
-              'class="hw dhw"',
+        'class="hw dhw"',
 
-              "</span>"
+        "</span>"
 
-          )
+      )
 
-      );
+    );
 
   }
 
   // -----------------------------------------------------
+  // IPA
+  // -----------------------------------------------------
 
-  function parseIPA(html,type){
+  function parseIPA(html, type) {
 
-      let start;
+    let start;
 
-      if(type==="us"){
+    if (type === "us") {
 
-          start='us dpron-i';
+      start =
+        'us dpron-i';
+
+    }
+
+    else {
+
+      start =
+        'uk dpron-i';
+
+    }
+
+    const block =
+      extractSection(
+
+        html,
+
+        start,
+
+        '</span></span>'
+
+      );
+
+    return Utils.htmlToText(
+
+      extractSingle(
+
+        block,
+
+        'class="ipa dipa lpr-2 lpl-1">',
+
+        "</span>"
+
+      )
+
+    );
+
+  }
+
+  // -----------------------------------------------------
+  // POS
+  // -----------------------------------------------------
+
+  function parsePOS(html) {
+
+    /*
+    * Cambridge places POS inside the main
+    * "pos-header dpos-h" of the first dictionary entry.
+    */
+
+    const entryStart =
+      html.indexOf(
+        '<div class="pr entry-body__el">'
+      );
+
+    if (entryStart < 0)
+      return "";
+
+    const entryEnd =
+      html.indexOf(
+        '<div class="pr entry-body__el">',
+        entryStart + 1
+      );
+
+    const entry =
+      entryEnd >= 0
+        ? html.substring(
+            entryStart,
+            entryEnd
+          )
+        : html.substring(entryStart);
+
+    const posStart =
+      entry.indexOf(
+        'class="pos dpos"'
+      );
+
+    if (posStart < 0)
+      return "";
+
+    return Utils.htmlToText(
+
+      extractSingle(
+
+        entry.substring(posStart),
+
+        ">",
+
+        "</span>"
+
+      )
+
+    );
+
+  }
+
+  // -----------------------------------------------------
+  // Level
+  // -----------------------------------------------------
+
+  function parseLevel(html) {
+
+    /*
+    * CEFR level is stored in:
+    *
+    * <span class="epp-xref dxref B2">B2</span>
+    *
+    * It belongs to the definition block.
+    */
+
+    const entryStart =
+      html.indexOf(
+        '<div class="pr entry-body__el">'
+      );
+
+    if (entryStart < 0)
+      return "";
+
+    const entryEnd =
+      html.indexOf(
+        '<div class="pr entry-body__el">',
+        entryStart + 1
+      );
+
+    const entry =
+      entryEnd >= 0
+        ? html.substring(
+            entryStart,
+            entryEnd
+          )
+        : html.substring(entryStart);
+
+    const levelStart =
+      entry.indexOf(
+        'class="epp-xref dxref'
+      );
+
+    if (levelStart < 0)
+      return "";
+
+    return Utils.htmlToText(
+
+      extractSingle(
+
+        entry.substring(levelStart),
+
+        ">",
+
+        "</span>"
+
+      )
+
+    );
+
+  }
+
+  // -----------------------------------------------------
+  // Entries
+  // -----------------------------------------------------
+
+  function parseEntries(html) {
+
+    const entries = [];
+
+    const entryStart =
+      html.indexOf(
+        '<div class="pr entry-body__el">'
+      );
+
+    if (entryStart < 0)
+      return entries;
+
+    const entryEnd =
+      html.indexOf(
+        '<div class="pr entry-body__el">',
+        entryStart + 1
+      );
+
+    const entry =
+      entryEnd >= 0
+        ? html.substring(
+            entryStart,
+            entryEnd
+          )
+        : html.substring(entryStart);
+
+    const blocks =
+      splitByClass(
+        entry,
+        "def-block"
+      );
+
+    blocks.forEach(
+
+      block => {
+
+        const obj = {
+
+          definition:
+            parseDefinition(block),
+
+          example:
+            parseExample(block)
+
+        };
+
+        if (obj.definition) {
+
+          entries.push(obj);
+
+        }
 
       }
 
-      // else{
+    );
 
-      //     start='uk dpron-i';
-
-      // }
-
-      const block=
-
-          extractSection(
-
-              html,
-
-              start,
-
-              '</span></span>'
-
-          );
-
-      return Utils.htmlToText(
-
-          extractSingle(
-
-              block,
-
-              'class="ipa dipa lpr-2 lpl-1">',
-
-              "</span>"
-
-          )
-
-      );
+    return entries;
 
   }
 
   // -----------------------------------------------------
+  // Collocations
+  // -----------------------------------------------------
 
-  function parsePOS(html){
+  function parseCollocations(html) {
 
-      const start = html.indexOf(
+    const section =
+      extractSection(
 
-          'class="pos dpos'
+        html,
 
-      );
+        'data-id="combinations"',
 
-      if(start < 0)
-
-          return "";
-
-      const block = html.substring(start);
-
-      return Utils.htmlToText(
-
-          extractSingle(
-
-              block,
-
-              '>',
-
-              "</span>"
-
-          )
+        '</div></div></div>'
 
       );
+
+    if (!section) {
+
+      return "";
+
+    }
+
+    const values = [];
+
+    /*
+     * Cambridge combination links are normally
+     * example/english/... links inside the
+     * "combinations" dataset.
+     */
+
+    const regex =
+      /<a[^>]+href="https:\/\/dictionary\.cambridge\.org\/example\/english\/[^"]+"[^>]*>([\s\S]*?)<\/a>/gi;
+
+    let match;
+
+    while (
+      (match = regex.exec(section)) !== null
+    ) {
+
+      const text =
+        Utils.htmlToText(match[1]);
+
+      if (text) {
+
+        values.push(text);
+
+      }
+
+    }
+
+    return Utils
+      .unique(values)
+      .join(" | ");
 
   }
 
   // -----------------------------------------------------
+  // Synonyms / Thesaurus
+  // -----------------------------------------------------
 
-  function parseLevel(html){
+  function parseSynonyms(html) {
 
-      const start = html.indexOf(
+    const section =
+      extractSection(
 
-          'class="epp-xref dxref'
+        html,
 
-      );
+        "Thesaurus: synonyms, antonyms, and examples",
 
-      if(start < 0)
-
-          return "";
-
-      const block = html.substring(start);
-
-      return Utils.htmlToText(
-
-          extractSingle(
-
-              block,
-
-              '>',
-
-              "</span>"
-
-          )
+        "</amp-accordion>"
 
       );
+
+    if (!section) {
+
+      return "";
+
+    }
+
+    const values = [];
+
+    /*
+     * Only collect links pointing to the
+     * Cambridge Thesaurus.
+     */
+
+    const regex =
+      /<a[^>]+href="\/thesaurus\/([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
+
+    let match;
+
+    while (
+      (match = regex.exec(section)) !== null
+    ) {
+
+      const href =
+        match[1];
+
+      const text =
+        Utils.htmlToText(match[2]);
+
+      if (
+        text &&
+        !href.startsWith("articles/")
+      ) {
+
+        values.push(text);
+
+      }
+
+    }
+
+    return Utils
+      .unique(values)
+      .join(" | ");
 
   }
 
   // -----------------------------------------------------
-
-  function parseEntries(html){
-
-      const entries=[];
-
-      const blocks=
-
-          splitByClass(
-
-              html,
-
-              "def-block"
-
-          );
-
-      blocks.forEach(
-
-          block=>{
-
-              const obj={
-
-                  definition:
-
-                      parseDefinition(block),
-
-                  example:
-
-                      parseExample(block)
-
-              };
-
-              if(obj.definition){
-
-                  entries.push(obj);
-              }
-
-          }
-
-      );
-
-      return entries;
-
-  }
-
+  // Definition
   // -----------------------------------------------------
 
-  function parseDefinition(block){
+  function parseDefinition(block) {
 
     const definition =
       Utils.htmlToText(
@@ -241,23 +455,26 @@ const Parser = (() => {
 
       );
 
-    return definition.replace(/:\s*$/, "");
+    return definition
+      .replace(/:\s*$/, "");
 
   }
 
   // -----------------------------------------------------
+  // Example
+  // -----------------------------------------------------
 
-  function parseExample(block){
+  function parseExample(block) {
 
-      return extractAll(
+    return extractAll(
 
-          block,
+      block,
 
-          'class="eg deg">',
+      'class="eg deg">',
 
-          "</span>"
+      "</span>"
 
-      )
+    )
 
       .map(Utils.htmlToText)
 
@@ -271,225 +488,203 @@ const Parser = (() => {
   // Generic extractors
   // -----------------------------------------------------
 
-  function extractSingle(html,start,end){
+  function extractSingle(
+    html,
+    start,
+    end
+  ) {
 
-      const i=
+    const i =
+      html.indexOf(start);
 
-          html.indexOf(start);
+    if (i < 0)
+      return "";
 
-      if(i<0)
+    const j =
+      html.indexOf(
+        end,
+        i
+      );
 
-          return "";
+    if (j < 0)
+      return "";
 
-      const j=
+    return html.substring(
 
-          html.indexOf(
+      i + start.length,
 
-              end,
+      j
 
-              i
+    );
 
-          );
+  }
 
-      if(j<0)
+  // -----------------------------------------------------
 
-          return "";
+  function extractAll(
+    html,
+    start,
+    end
+  ) {
 
-      return html.substring(
+    const arr = [];
 
-          i+start.length,
+    let pos = 0;
+
+    while (true) {
+
+      const i =
+        html.indexOf(
+          start,
+          pos
+        );
+
+      if (i < 0)
+        break;
+
+      const j =
+        html.indexOf(
+          end,
+          i + start.length
+        );
+
+      if (j < 0)
+        break;
+
+      arr.push(
+
+        html.substring(
+
+          i + start.length,
 
           j
 
-      );
-
-  }
-
-  // -----------------------------------------------------
-
-  function extractAll(html,start,end){
-
-      const arr=[];
-
-      let pos=0;
-
-      while(true){
-
-          const i=
-
-              html.indexOf(
-
-                  start,
-
-                  pos
-
-              );
-
-          if(i<0)
-
-              break;
-
-          const j=
-
-              html.indexOf(
-
-                  end,
-
-                  i+start.length
-
-              );
-
-          if(j<0)
-
-              break;
-
-          arr.push(
-
-              html.substring(
-
-                  i+start.length,
-
-                  j
-
-              )
-
-          );
-
-          pos=j+end.length;
-
-      }
-
-      return arr;
-
-  }
-
-  // -----------------------------------------------------
-
-  function extractSection(html,start,end){
-
-      const i=
-
-          html.indexOf(start);
-
-      if(i<0)
-
-          return "";
-
-      const j=
-
-          html.indexOf(
-
-              end,
-
-              i
-
-          );
-
-      if(j<0)
-
-          return "";
-
-      return html.substring(i,j);
-
-  }
-
-  // -----------------------------------------------------
-
-  function extractAttribute(html,attr){
-
-      const i=
-
-          html.indexOf(attr);
-
-      if(i<0)
-
-          return "";
-
-      const j=
-
-          html.indexOf(
-
-              '"',
-
-              i+attr.length
-
-          );
-
-      return html.substring(
-
-          i+attr.length,
-
-          j
+        )
 
       );
 
+      pos =
+        j + end.length;
+
+    }
+
+    return arr;
+
   }
 
   // -----------------------------------------------------
 
-  function splitByClass(html,className){
+  function extractSection(
+    html,
+    start,
+    end
+  ) {
 
-      const arr=[];
+    const i =
+      html.indexOf(start);
 
-      const token='class="'+className;
+    if (i < 0)
+      return "";
 
-      let pos=0;
+    const j =
+      html.indexOf(
+        end,
+        i
+      );
 
-      while(true){
+    if (j < 0)
+      return "";
 
-          const i=
-
-              html.indexOf(
-
-                  token,
-
-                  pos
-
-              );
-
-          if(i<0)
-
-              break;
-
-          const j=
-
-              html.indexOf(
-
-                  token,
-
-                  i+1
-
-              );
-
-          if(j<0){
-
-              arr.push(
-
-                  html.substring(i)
-
-              );
-
-              break;
-
-          }
-
-          arr.push(
-
-              html.substring(i,j)
-
-          );
-
-          pos=j;
-
-      }
-
-      return arr;
+    return html.substring(
+      i,
+      j
+    );
 
   }
 
-  return{
+  // -----------------------------------------------------
 
-      parse
+  function extractAttribute(
+    html,
+    attr
+  ) {
+
+    const i =
+      html.indexOf(attr);
+
+    if (i < 0)
+      return "";
+
+    const j =
+      html.indexOf(
+        '"',
+        i + attr.length
+      );
+
+    return html.substring(
+      i + attr.length,
+      j
+    );
+
+  }
+
+  // -----------------------------------------------------
+
+  function splitByClass(
+    html,
+    className
+  ) {
+
+    const arr = [];
+
+    const token =
+      'class="' +
+      className;
+
+    let pos = 0;
+
+    while (true) {
+
+      const i =
+        html.indexOf(
+          token,
+          pos
+        );
+
+      if (i < 0)
+        break;
+
+      const j =
+        html.indexOf(
+          token,
+          i + 1
+        );
+
+      if (j < 0) {
+
+        arr.push(
+          html.substring(i)
+        );
+
+        break;
+
+      }
+
+      arr.push(
+        html.substring(i, j)
+      );
+
+      pos = j;
+
+    }
+
+    return arr;
+
+  }
+
+  return {
+
+    parse
 
   };
 

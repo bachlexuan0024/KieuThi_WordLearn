@@ -60,7 +60,11 @@ const CONFIG = {
 
     LINK: 9,
 
-    STATUS: 10
+    COLLOCATION: 10,
+
+    SYNONYM: 11,
+
+    STATUS: 12
 
   },
 

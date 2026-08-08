@@ -159,6 +159,32 @@ const SheetWriter = (() => {
       );
 
     //------------------------------------
+    // COLLOCATION
+    //------------------------------------
+
+    sheet
+      .getRange(
+        row,
+        CONFIG.COLUMN.COLLOCATION
+      )
+      .setValue(
+        result.collocation || ""
+      );
+
+    //------------------------------------
+    // SYNONYM
+    //------------------------------------
+
+    sheet
+      .getRange(
+        row,
+        CONFIG.COLUMN.SYNONYM
+      )
+      .setValue(
+        result.synonym || ""
+      );
+
+    //------------------------------------
     // STATUS
     //------------------------------------
 
