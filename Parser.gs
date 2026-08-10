@@ -226,9 +226,13 @@ const Parser = (() => {
     if (!levelMatch)
       return "";
 
-    return Utils.htmlToText(
+    const level = Utils.htmlToText(
       levelMatch[1]
-    );
+    ).trim().toUpperCase();
+
+    return /^(A1|A2|B1|B2|C1|C2)$/.test(level)
+      ? level
+      : "";
 
   }
 
