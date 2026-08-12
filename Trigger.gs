@@ -112,17 +112,50 @@ function handleWordEdit(e) {
 
 
     // Ghép bằng |
-    const output =
-      patterns.join(" | ");
+    const output = patterns.join(" || ");
 
+    const outputRange = sheet.getRange(
+      range.getRow(),
+      CONFIG.PATTERN_COLUMN
+    );
 
-    // Ghi vào Sheet
-    sheet
-      .getRange(
-        range.getRow(),
-        CONFIG.PATTERN_COLUMN
-      )
-      .setValue(output);
+    // Tạo Rich Text
+    const richTextBuilder =
+      SpreadsheetApp.newRichTextValue()
+        .setText(output);
+
+    // Tìm tất cả vị trí của từ cần tìm
+    const wordLower = word.toLowerCase();
+    const outputLower = output.toLowerCase();
+
+    let searchStart = 0;
+
+    while (true) {
+
+      const index =
+        outputLower.indexOf(
+          wordLower,
+          searchStart
+        );
+
+      if (index === -1) break;
+
+      richTextBuilder.setTextStyle(
+        index,
+        index + word.length,
+        SpreadsheetApp.newTextStyle()
+          .setBold(true)
+          .build()
+      );
+
+      searchStart =
+        index + word.length;
+    }
+
+    // Ghi Rich Text vào ô
+    outputRange.setRichTextValue(
+      richTextBuilder.build()
+    );
 
 
   } catch (error) {
