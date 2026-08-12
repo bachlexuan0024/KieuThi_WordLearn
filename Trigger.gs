@@ -1,7 +1,7 @@
 /**
  * ==========================================================
  * Trigger.gs
- * Google Sheets Triggers
+ * Google Sheets Trigger
  * ==========================================================
  */
 
@@ -9,79 +9,129 @@ function onEdit(e) {
 
   try {
 
-    if (!e) return;
+    if (!e || !e.range) return;
 
-    const sheet = e.range.getSheet();
 
-    const row = e.range.getRow();
+    const range = e.range;
+    const sheet = range.getSheet();
 
-    const col = e.range.getColumn();
 
-    //-------------------------------------
-    // Header
-    //-------------------------------------
-
-    if (row === 1)
+    // Chỉ chạy đúng sheet
+    if (sheet.getName() !== CONFIG.SHEET_NAME) {
       return;
+    }
 
-    //-------------------------------------
-    // Only column A
-    //-------------------------------------
 
-    if (col !== CONFIG.COLUMN.WORD)
+    // Chỉ chạy khi sửa cột WORD
+    if (
+      range.getColumn() !== CONFIG.WORD_COLUMN
+    ) {
       return;
+    }
 
-    //-------------------------------------
-    // Word
-    //-------------------------------------
 
-    const word = String(
-      e.range.getValue() || ""
-    ).trim();
+    // Không xử lý header
+    if (range.getRow() === 1) {
+      return;
+    }
 
-    //-------------------------------------
-    // Empty
-    //-------------------------------------
 
+    const word =
+      String(range.getValue())
+        .trim();
+
+
+    // Nếu xóa từ thì xóa pattern
     if (!word) {
 
-      SheetWriter.clear(
-        sheet,
-        row
-      );
+      sheet
+        .getRange(
+          range.getRow(),
+          CONFIG.PATTERN_COLUMN
+        )
+        .clearContent();
 
       return;
+    }
+
+
+    // Gọi Gemini
+    const result =
+      getPatternsFromGemini_(word);
+
+
+    // Kiểm tra kết quả
+    if (
+      !result ||
+      !Array.isArray(result.patterns)
+    ) {
+
+      throw new Error(
+        "Gemini không trả về patterns hợp lệ."
+      );
 
     }
 
-    //-------------------------------------
-    // Lookup
-    //-------------------------------------
 
-    const result =
-      CambridgeService.lookup(
-        word
-      );
+    // Làm sạch pattern
+    const patterns =
+      result.patterns
+        .map(p => String(p).trim())
+        .filter(Boolean)
+        .slice(0, CONFIG.MAX_PATTERNS);
 
-    //-------------------------------------
-    // Write
-    //-------------------------------------
 
-    SheetWriter.write(
+    // Không có pattern
+    if (!patterns.length) {
 
-      sheet,
+      sheet
+        .getRange(
+          range.getRow(),
+          CONFIG.PATTERN_COLUMN
+        )
+        .setValue("");
 
-      row,
+      return;
+    }
 
-      result
 
-    );
+    // Ghép bằng |
+    const output =
+      patterns.join(" | ");
 
-  }
 
-  catch(err){
+    // Ghi vào Sheet
+    sheet
+      .getRange(
+        range.getRow(),
+        CONFIG.PATTERN_COLUMN
+      )
+      .setValue(output);
 
-    Logger.log(err);
+
+  } catch (error) {
+
+    const row =
+      e && e.range
+        ? e.range.getRow()
+        : null;
+
+
+    if (row) {
+
+      e.range
+        .getSheet()
+        .getRange(
+          row,
+          CONFIG.PATTERN_COLUMN
+        )
+        .setValue(
+          "ERROR: " + error.message
+        );
+
+    }
+
+    console.error(error);
 
   }
 
