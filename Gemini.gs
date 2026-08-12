@@ -42,6 +42,14 @@ patterns for the English word below.
 WORD:
 ${word}
 
+For every pattern, provide:
+1. The grammatical pattern.
+2. A short Vietnamese meaning explaining how the pattern is used.
+
+IMPORTANT:
+The Vietnamese meaning must explain the meaning/function of the
+whole pattern, not simply translate the individual words.
+
 Use these notation rules:
 
 S = Subject
@@ -62,33 +70,59 @@ S + will + be + V-ing
 S + will + have + V3
 
 want:
-S + want + N
-S + want + to V
-S + want + O + to V
+want + N
+want + to V
+want + O + to V
 
 avoid:
-S + avoid + N
-S + avoid + V-ing
+avoid + N
+avoid + V-ing
 
 depend:
-S + depend on + N
+depend on + N
+
+make:
+make + N
+make + O + V
+
+For example:
+
+make + O + V
+Vietnamese meaning:
+"bắt/ép ai làm gì"
+
+want + O + to V
+Vietnamese meaning:
+"muốn ai làm gì"
+
+avoid + V-ing
+Vietnamese meaning:
+"tránh làm gì"
+
+depend on + N
+Vietnamese meaning:
+"phụ thuộc vào cái gì/ai"
 
 Rules:
 
-1. Return only genuinely useful grammatical patterns.
+1. Return only genuinely useful and common grammatical patterns.
 2. Do not return ordinary example sentences.
 3. Do not invent rare or unnatural patterns.
-4. Prefer common patterns used by English learners.
+4. Prefer patterns useful for English learners.
 5. Preserve required prepositions such as:
    on, in, at, for, to, with, from, etc.
-6. Include the word itself in every pattern.
-7. Use S, O, N, V, V-ing, V3, Adj and Adv notation.
-8. Do not use "something", "somebody", "a person", etc.
-9. Maximum ${CONFIG.MAX_PATTERNS} patterns.
-10. Sort patterns from most common/useful to less common.
-11. If the word has multiple important parts of speech,
-    include patterns for the important ones.
-12. Do not provide explanations outside the requested JSON.
+6. Do not use "something", "somebody", "a person", etc.
+7. Maximum ${CONFIG.MAX_PATTERNS} patterns.
+8. Sort patterns from most common/useful to less common.
+9. If the word has multiple important parts of speech,
+   include important patterns from those parts of speech.
+10. Every pattern must have a concise Vietnamese explanation.
+11. The explanation should normally be 3-10 Vietnamese words.
+12. Do not put example sentences in the explanation.
+13. Do not translate the pattern word-for-word.
+14. Explain what the pattern means when actually used.
+
+Return the result using the required JSON schema.
 `;
 
 
@@ -111,7 +145,19 @@ Rules:
       patterns: {
         type: "array",
         items: {
-          type: "string"
+          type: "object",
+          properties: {
+            pattern: {
+              type: "string"
+            },
+            meaning: {
+              type: "string"
+            }
+          },
+          required: [
+            "pattern",
+            "meaning"
+          ]
         }
       }
 

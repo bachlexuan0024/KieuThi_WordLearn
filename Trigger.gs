@@ -76,7 +76,23 @@ function handleWordEdit(e) {
     // Làm sạch pattern
     const patterns =
       result.patterns
-        .map(p => String(p).trim())
+        .map(item => {
+
+          const pattern =
+            String(item.pattern || "").trim();
+
+          const meaning =
+            String(item.meaning || "").trim();
+
+          if (!pattern) return "";
+
+          if (!meaning) {
+            return pattern;
+          }
+
+          return pattern + " (" + meaning + ")";
+
+        })
         .filter(Boolean)
         .slice(0, CONFIG.MAX_PATTERNS);
 
