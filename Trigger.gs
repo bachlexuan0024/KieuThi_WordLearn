@@ -17,14 +17,18 @@ function handleWordEdit(e) {
 
 
     // Chỉ chạy đúng sheet
-    if (sheet.getName() !== PATTERN_CONFIG.SHEET_NAME) {
+    if (
+      sheet.getName() !==
+      PATTERN_CONFIG.SHEET_NAME
+    ) {
       return;
     }
 
 
     // Chỉ chạy khi sửa cột WORD
     if (
-      range.getColumn() !== PATTERN_CONFIG.WORD_COLUMN
+      range.getColumn() !==
+      PATTERN_CONFIG.WORD_COLUMN
     ) {
       return;
     }
@@ -37,8 +41,7 @@ function handleWordEdit(e) {
 
 
     const word =
-      String(range.getValue())
-        .trim();
+      String(range.getValue()).trim();
 
 
     // Nếu xóa từ thì xóa pattern
@@ -76,25 +79,45 @@ function handleWordEdit(e) {
     // Làm sạch pattern
     const patterns =
       result.patterns
+
         .map(item => {
 
           const pattern =
-            String(item.pattern || "").trim();
+            String(
+              item.pattern || ""
+            ).trim();
 
           const meaning =
-            String(item.meaning || "").trim();
+            String(
+              item.meaning || ""
+            ).trim();
 
-          if (!pattern) return "";
+
+          if (!pattern) {
+            return "";
+          }
+
 
           if (!meaning) {
             return pattern;
           }
 
-          return pattern + " (" + meaning + ")";
+
+          return (
+            pattern +
+            " (" +
+            meaning +
+            ")"
+          );
 
         })
+
         .filter(Boolean)
-        .slice(0, PATTERN_CONFIG.MAX_PATTERNS);
+
+        .slice(
+          0,
+          PATTERN_CONFIG.MAX_PATTERNS
+        );
 
 
     // Không có pattern
@@ -105,32 +128,43 @@ function handleWordEdit(e) {
           range.getRow(),
           PATTERN_CONFIG.PATTERN_COLUMN
         )
-        .setValue("");
+        .clearContent();
 
       return;
     }
 
 
     // Ghép bằng |
-    const output = patterns.join(" || ");
+    const output =
+      patterns.join(" || ");
 
-    const outputRange = sheet.getRange(
-      range.getRow(),
-      PATTERN_CONFIG.PATTERN_COLUMN
-    );
+
+    const outputRange =
+      sheet.getRange(
+        range.getRow(),
+        PATTERN_CONFIG.PATTERN_COLUMN
+      );
+
 
     // Tạo Rich Text
     const richTextBuilder =
-      SpreadsheetApp.newRichTextValue()
+      SpreadsheetApp
+        .newRichTextValue()
         .setText(output);
 
-    // Tìm tất cả vị trí của từ cần tìm
-    const wordLower = word.toLowerCase();
-    const outputLower = output.toLowerCase();
+
+    // Tìm và in đậm từ được tìm
+    const wordLower =
+      word.toLowerCase();
+
+    const outputLower =
+      output.toLowerCase();
+
 
     let searchStart = 0;
 
-    while (true) {
+
+    while (searchStart < output.length) {
 
       const index =
         outputLower.indexOf(
@@ -138,24 +172,58 @@ function handleWordEdit(e) {
           searchStart
         );
 
-      if (index === -1) break;
 
-      richTextBuilder.setTextStyle(
-        index,
-        index + word.length,
-        SpreadsheetApp.newTextStyle()
-          .setBold(true)
-          .build()
-      );
+      if (index === -1) {
+        break;
+      }
+
+
+      // Kiểm tra whole word
+      const before =
+        index > 0
+          ? outputLower[index - 1]
+          : "";
+
+      const after =
+        index + word.length < outputLower.length
+          ? outputLower[index + word.length]
+          : "";
+
+
+      const isWordBoundary =
+        !/[a-zA-Z]/.test(before) &&
+        !/[a-zA-Z]/.test(after);
+
+
+      if (isWordBoundary) {
+
+        richTextBuilder.setTextStyle(
+
+          index,
+
+          index + word.length,
+
+          SpreadsheetApp
+            .newTextStyle()
+            .setBold(true)
+            .build()
+
+        );
+
+      }
+
 
       searchStart =
         index + word.length;
+
     }
 
-    // Ghi Rich Text vào ô
-    outputRange.setRichTextValue(
-      richTextBuilder.build()
-    );
+
+    // Ghi Rich Text
+    outputRange
+      .setRichTextValue(
+        richTextBuilder.build()
+      );
 
 
   } catch (error) {
@@ -175,10 +243,12 @@ function handleWordEdit(e) {
           PATTERN_CONFIG.PATTERN_COLUMN
         )
         .setValue(
-          "ERROR: " + error.message
+          "ERROR: " +
+          error.message
         );
 
     }
+
 
     console.error(error);
 
@@ -186,7 +256,37 @@ function handleWordEdit(e) {
 
 }
 
+
+/**
+ * Tạo installable trigger.
+ *
+ * Chỉ cần chạy function này MỘT LẦN.
+ */
 function createTrigger() {
+
+  const triggers =
+    ScriptApp.getProjectTriggers();
+
+
+  // Không tạo trigger trùng
+  const exists =
+    triggers.some(
+      trigger =>
+        trigger.getHandlerFunction() ===
+        "handleWordEdit"
+    );
+
+
+  if (exists) {
+
+    console.log(
+      "handleWordEdit trigger đã tồn tại."
+    );
+
+    return;
+
+  }
+
 
   ScriptApp
     .newTrigger("handleWordEdit")
@@ -195,5 +295,10 @@ function createTrigger() {
     )
     .onEdit()
     .create();
+
+
+  console.log(
+    "Đã tạo handleWordEdit trigger."
+  );
 
 }

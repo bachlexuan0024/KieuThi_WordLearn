@@ -183,7 +183,7 @@ Return the result using the required JSON schema.
       }
     ],
 
-    generationPATTERN_CONFIG: {
+    generationConfig: {
 
       responseMimeType: "application/json",
 

@@ -5,7 +5,7 @@
  * ==========================================================
  */
 
-const PATTERN_PATTERN_CONFIG = {
+const PATTERN_CONFIG = {
   SHEET_NAME: "UsagePattern",
 
   WORD_COLUMN: 1,
