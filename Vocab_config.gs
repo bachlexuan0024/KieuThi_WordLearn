@@ -7,6 +7,8 @@
  */
 
 const VOCAB_CONFIG = {
+  
+  SHEET_NAME: "Vocabulary",
 
   VERSION: "2.0.0",
 
