@@ -1,12 +1,12 @@
 /**
  * ==========================================================
  * Cambridge Dictionary
- * Config.gs
+ * VOCAB_CONFIG.gs
  * Global configuration
  * ==========================================================
  */
 
-const CONFIG = {
+const VOCAB_CONFIG = {
 
   VERSION: "2.0.0",
 

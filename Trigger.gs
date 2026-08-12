@@ -28,7 +28,7 @@ function onEdit(e) {
     // Only column A
     //-------------------------------------
 
-    if (col !== CONFIG.COLUMN.WORD)
+    if (col !== VOCAB_CONFIG.COLUMN.WORD)
       return;
 
     //-------------------------------------

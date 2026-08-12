@@ -57,7 +57,7 @@ const Cache = (() => {
           memory.put(
             word,
             json,
-            CONFIG.CACHE.EXPIRE_SECONDS
+            VOCAB_CONFIG.CACHE.EXPIRE_SECONDS
           );
 
           return obj;
@@ -88,7 +88,7 @@ const Cache = (() => {
 
       json,
 
-      CONFIG.CACHE.EXPIRE_SECONDS
+      VOCAB_CONFIG.CACHE.EXPIRE_SECONDS
 
     );
 
@@ -226,14 +226,14 @@ const Cache = (() => {
 
     let sheet =
       ss.getSheetByName(
-        CONFIG.SHEET.CACHE_NAME
+        VOCAB_CONFIG.SHEET.CACHE_NAME
       );
 
     if (!sheet) {
 
       sheet =
         ss.insertSheet(
-          CONFIG.SHEET.CACHE_NAME
+          VOCAB_CONFIG.SHEET.CACHE_NAME
         );
 
       sheet.hideSheet();

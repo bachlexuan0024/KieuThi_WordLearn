@@ -130,7 +130,7 @@ const CambridgeService = (() => {
           entries:[],
 
           url:
-            CONFIG.CAMBRIDGE.BASE_URL+
+            VOCAB_CONFIG.CAMBRIDGE.BASE_URL+
             word
 
       };

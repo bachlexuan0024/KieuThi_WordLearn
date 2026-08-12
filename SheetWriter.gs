@@ -47,7 +47,7 @@ const SheetWriter = (() => {
     sheet
       .getRange(
         row,
-        CONFIG.COLUMN.DEFINITION
+        VOCAB_CONFIG.COLUMN.DEFINITION
       )
       .setValue(
         entry.definition || ""
@@ -60,7 +60,7 @@ const SheetWriter = (() => {
     sheet
       .getRange(
         row,
-        CONFIG.COLUMN.VIETNAMESE
+        VOCAB_CONFIG.COLUMN.VIETNAMESE
       )
       .setValue(
         Translator.translate(
@@ -92,7 +92,7 @@ const SheetWriter = (() => {
     // sheet
     //   .getRange(
     //     row,
-    //     CONFIG.COLUMN.IPA_UK
+    //     VOCAB_CONFIG.COLUMN.IPA_UK
     //   )
     //   .setValue(
     //     result.ukIPA || ""
@@ -101,7 +101,7 @@ const SheetWriter = (() => {
     sheet
       .getRange(
         row,
-        CONFIG.COLUMN.IPA_US
+        VOCAB_CONFIG.COLUMN.IPA_US
       )
       .setValue(
         result.usIPA || ""
@@ -114,7 +114,7 @@ const SheetWriter = (() => {
     sheet
       .getRange(
         row,
-        CONFIG.COLUMN.POS
+        VOCAB_CONFIG.COLUMN.POS
       )
       .setValue(
         result.pos || ""
@@ -127,7 +127,7 @@ const SheetWriter = (() => {
     sheet
       .getRange(
         row,
-        CONFIG.COLUMN.LEVEL
+        VOCAB_CONFIG.COLUMN.LEVEL
       )
       .setValue(
         result.level || ""
@@ -140,7 +140,7 @@ const SheetWriter = (() => {
     sheet
       .getRange(
         row,
-        CONFIG.COLUMN.LINK
+        VOCAB_CONFIG.COLUMN.LINK
       )
       .setRichTextValue(
 
@@ -165,7 +165,7 @@ const SheetWriter = (() => {
     sheet
       .getRange(
         row,
-        CONFIG.COLUMN.COLLOCATION
+        VOCAB_CONFIG.COLUMN.COLLOCATION
       )
       .setValue(
         result.collocation || ""
@@ -178,7 +178,7 @@ const SheetWriter = (() => {
     sheet
       .getRange(
         row,
-        CONFIG.COLUMN.SYNONYM
+        VOCAB_CONFIG.COLUMN.SYNONYM
       )
       .setValue(
         result.synonym || ""
@@ -191,10 +191,10 @@ const SheetWriter = (() => {
     sheet
       .getRange(
         row,
-        CONFIG.COLUMN.STATUS
+        VOCAB_CONFIG.COLUMN.STATUS
       )
       .setValue(
-        CONFIG.STATUS.NEW
+        VOCAB_CONFIG.STATUS.NEW
       );
 
   }
@@ -253,7 +253,7 @@ const SheetWriter = (() => {
     sheet
       .getRange(
         row,
-        CONFIG.COLUMN.EXAMPLE
+        VOCAB_CONFIG.COLUMN.EXAMPLE
       )
       .setRichTextValue(
         builder.build()
@@ -272,11 +272,11 @@ const SheetWriter = (() => {
 
           row,
 
-          CONFIG.COLUMN.STATUS
+          VOCAB_CONFIG.COLUMN.STATUS
 
         )
         .setValue(
-          CONFIG.STATUS.NOT_FOUND
+          VOCAB_CONFIG.STATUS.NOT_FOUND
         );
 
   }
@@ -300,7 +300,7 @@ const SheetWriter = (() => {
 
           row,
 
-          CONFIG.COLUMN.STATUS
+          VOCAB_CONFIG.COLUMN.STATUS
 
         )
         .setValue(message);
@@ -316,12 +316,12 @@ const SheetWriter = (() => {
 
           row,
 
-          CONFIG.COLUMN.DEFINITION,
+          VOCAB_CONFIG.COLUMN.DEFINITION,
 
           1,
 
-          CONFIG.COLUMN.STATUS-
-          CONFIG.COLUMN.DEFINITION+1
+          VOCAB_CONFIG.COLUMN.STATUS-
+          VOCAB_CONFIG.COLUMN.DEFINITION+1
 
         )
         .clearContent();

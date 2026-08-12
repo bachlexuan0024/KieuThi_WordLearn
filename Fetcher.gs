@@ -16,7 +16,7 @@ const Fetcher = (() => {
     word = Utils.lower(word);
 
     const url =
-      CONFIG.CAMBRIDGE.BASE_URL +
+      VOCAB_CONFIG.CAMBRIDGE.BASE_URL +
       encodeURIComponent(
         word.replace(/\s+/g, "-")
       );
@@ -39,7 +39,7 @@ const Fetcher = (() => {
       headers: {
 
         "User-Agent":
-          CONFIG.CAMBRIDGE.USER_AGENT,
+          VOCAB_CONFIG.CAMBRIDGE.USER_AGENT,
 
         "Accept":
           "text/html",
