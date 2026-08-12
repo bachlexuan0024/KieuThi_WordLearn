@@ -5,7 +5,7 @@
  * ==========================================================
  */
 
-function onEdit(e) {
+function handleWordEdit(e) {
 
   try {
 
@@ -134,5 +134,17 @@ function onEdit(e) {
     console.error(error);
 
   }
+
+}
+
+function createTrigger() {
+
+  ScriptApp
+    .newTrigger("handleWordEdit")
+    .forSpreadsheet(
+      SpreadsheetApp.getActive()
+    )
+    .onEdit()
+    .create();
 
 }
