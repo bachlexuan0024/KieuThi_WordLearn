@@ -6,7 +6,7 @@
  */
 
 const CONFIG = {
-  SHEET_NAME: "Sheet1",
+  SHEET_NAME: "UsagePattern",
 
   WORD_COLUMN: 1,
   PATTERN_COLUMN: 2,
