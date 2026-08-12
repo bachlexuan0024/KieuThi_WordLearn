@@ -12,11 +12,11 @@ const PATTERN_CONFIG = {
   PATTERN_COLUMN: 2,
 
   // Gemini API
-  MODEL: "gemini-3.5-flash",
+  MODEL: "openai/gpt-oss-20b",
 
   API_URL:
-    "https://generativelanguage.googleapis.com/v1beta/models/",
+    "https://api.groq.com/openai/v1/chat/completions",
 
   // Số pattern tối đa cho một từ
-  MAX_PATTERNS: 6
+  MAX_PATTERNS: 20
 };
