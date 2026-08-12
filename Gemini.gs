@@ -28,8 +28,8 @@ function getPatternsFromGemini_(word) {
   const apiKey = getGeminiApiKey_();
 
   const url =
-    CONFIG.API_URL +
-    CONFIG.MODEL +
+    PATTERN_CONFIG.API_URL +
+    PATTERN_CONFIG.MODEL +
     ":generateContent";
 
 
@@ -112,7 +112,7 @@ Rules:
 5. Preserve required prepositions such as:
    on, in, at, for, to, with, from, etc.
 6. Do not use "something", "somebody", "a person", etc.
-7. Maximum ${CONFIG.MAX_PATTERNS} patterns.
+7. Maximum ${PATTERN_CONFIG.MAX_PATTERNS} patterns.
 8. Sort patterns from most common/useful to less common.
 9. If the word has multiple important parts of speech,
    include important patterns from those parts of speech.
@@ -183,7 +183,7 @@ Return the result using the required JSON schema.
       }
     ],
 
-    generationConfig: {
+    generationPATTERN_CONFIG: {
 
       responseMimeType: "application/json",
 

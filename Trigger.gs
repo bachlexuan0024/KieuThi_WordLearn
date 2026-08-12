@@ -17,14 +17,14 @@ function handleWordEdit(e) {
 
 
     // Chỉ chạy đúng sheet
-    if (sheet.getName() !== CONFIG.SHEET_NAME) {
+    if (sheet.getName() !== PATTERN_CONFIG.SHEET_NAME) {
       return;
     }
 
 
     // Chỉ chạy khi sửa cột WORD
     if (
-      range.getColumn() !== CONFIG.WORD_COLUMN
+      range.getColumn() !== PATTERN_CONFIG.WORD_COLUMN
     ) {
       return;
     }
@@ -47,7 +47,7 @@ function handleWordEdit(e) {
       sheet
         .getRange(
           range.getRow(),
-          CONFIG.PATTERN_COLUMN
+          PATTERN_CONFIG.PATTERN_COLUMN
         )
         .clearContent();
 
@@ -94,7 +94,7 @@ function handleWordEdit(e) {
 
         })
         .filter(Boolean)
-        .slice(0, CONFIG.MAX_PATTERNS);
+        .slice(0, PATTERN_CONFIG.MAX_PATTERNS);
 
 
     // Không có pattern
@@ -103,7 +103,7 @@ function handleWordEdit(e) {
       sheet
         .getRange(
           range.getRow(),
-          CONFIG.PATTERN_COLUMN
+          PATTERN_CONFIG.PATTERN_COLUMN
         )
         .setValue("");
 
@@ -116,7 +116,7 @@ function handleWordEdit(e) {
 
     const outputRange = sheet.getRange(
       range.getRow(),
-      CONFIG.PATTERN_COLUMN
+      PATTERN_CONFIG.PATTERN_COLUMN
     );
 
     // Tạo Rich Text
@@ -172,7 +172,7 @@ function handleWordEdit(e) {
         .getSheet()
         .getRange(
           row,
-          CONFIG.PATTERN_COLUMN
+          PATTERN_CONFIG.PATTERN_COLUMN
         )
         .setValue(
           "ERROR: " + error.message

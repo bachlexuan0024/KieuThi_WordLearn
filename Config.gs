@@ -1,11 +1,11 @@
 /**
  * ==========================================================
- * Config.gs
+ * PATTERN_CONFIG.gs
  * Gemini Pattern Project
  * ==========================================================
  */
 
-const CONFIG = {
+const PATTERN_PATTERN_CONFIG = {
   SHEET_NAME: "UsagePattern",
 
   WORD_COLUMN: 1,
